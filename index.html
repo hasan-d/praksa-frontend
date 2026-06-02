@@ -27,6 +27,7 @@
     <section id="hero">
         <h1>Dobrodošli na moju stranicu</h1>
         <p>Student na praksi @ IDK Studio </p>
+        <button id="promijeni" class="btn btn-primary">Promijeni naslov</button>
     </section>
     <section id="onama">
         <h2>O nama</h2>
@@ -71,6 +72,7 @@
             </div>
         </div>
     </div>
+    <button id="brojac" class="btn btn-primary mt-4">Kliknuto: 0 puta</button>
     </section>
     <section id="kontakt">
         <h2>Kontaktirajte nas</h2>
@@ -82,5 +84,15 @@
         <p>© 2026 Moja Web Stranica.</p>
     </footer>  
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById('promijeni').addEventListener('click', function() {
+        document.querySelector('#hero h1').textContent = 'Novi naslov!';
+    });
+    let brojac = 0;
+    document.getElementById('brojac').addEventListener('click',function(){
+        brojac++;
+        this.textContent = 'Kliknuto: ' + brojac + ' puta';
+    });
+</script>
 </body>
 </html>
