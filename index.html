@@ -147,6 +147,17 @@
         </div>
     </div>
  </div>  
+ <section id="vrijeme" class="py-5 bg-white">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Vrijeme</h2>
+            <button id="osvjeziVrijeme" class="btn btn-outline-primary">Osvježi</button>
+        </div>
+        <div class="row" id="vrijemeContainer">
+            <p class="text-center text-muted">Klikni "Osvježi" za prikaz vremena</p>
+        </div>
+    </div>
+</section>
     <footer>
         <p>© 2026 Moja Web Stranica.</p>
     </footer>  
@@ -162,6 +173,12 @@
         this.textContent = 'Kliknuto: ' + brojac + ' puta';
     });
 
+    const utakmice = [
+    { grad: "Toronto", datum: "12. jun 2026", protivnik: "Qatar", stadion: "BMO Field", lat: "43.65", lon: "-79.38" },
+    { grad: "Inglewood", datum: "18. jun 2026", protivnik: "Švicarska", stadion: "SoFi Stadium", lat: "33.94", lon: "-118.34" },
+    { grad: "Seattle", datum: "24. jun 2026", protivnik: "Kanada", stadion: "Lumen Field", lat: "47.60", lon: "-122.33" }
+    ];
+
     const igraci = [
     { ime: "Edin Džeko", pozicija: "Napadač", broj: 11, godina: 1986, grad: "Sarajevo", klub: "Schalke 04", golovi: 73, nastupi: 148, opis: "Kapiten i rekorder po broju golova. Vodi BiH na drugo Svjetsko prvenstvo." },
     { ime: "Amir Hadžiahmetović", pozicija: "Defenzivni vezni", broj: 16, godina: 1997, grad: "Zenica", klub: "Hull City", golovi: 0, nastupi: 34, opis: "Tvrdi vezni igrač, pčelica u sredini terena." },
@@ -169,7 +186,7 @@
     { ime: "Esmir Bajraktarević", pozicija: "Desno krilo", broj: 20, godina: 2005, grad: "Milwaukee, SAD", klub: "PSV Eindhoven", golovi: 1, nastupi: 14, opis: "Rođen u Americi, izabrao BiH. Junak play-offa protiv Italije." },
     { ime: "Kerim Alajbegović", pozicija: "Lijevo krilo", broj: 19, godina: 2008, grad: "München", klub: "RB Salzburg", golovi: 1, nastupi: 8, opis: "Najmlađi u timu sa 18 godina. Wunderkind iz Salzburga." },
     { ime: "Amar Memić", pozicija: "Desni vezni", broj: 15, godina: 2001, grad: "Mostar", klub: "Viktoria Plzeň", golovi: 1, nastupi: 11, opis: "Nevjerovatan dribler, brz k'o munja." }
-];
+    ];
 
     function prikaziIgrace(niz) {
     const container = document.getElementById('kartice-container');
@@ -178,7 +195,7 @@
         const col = document.createElement('div');
         col.className = 'col-lg-4 col-md-6 mb-4';
         col.innerHTML = `
-            <div class="card h-100 shadow-sm" data-index="${igraci.indexOf(igrac)}" data-bs-toggle="modal" data-bs-target="#detaljiModal">
+            <div class="card h-100 shadow-sm" data-index="${igraci.indexOf(igrac)}">
                 <div class="card-body text-center">
                     <h5 class="card-title">${igrac.ime}</h5>
                     <p class="card-text text-muted">${igrac.pozicija} · Broj ${igrac.broj}</p>
@@ -186,7 +203,7 @@
                       <div class="mt-3 d-flex gap-2 justify-content-center">
                         <button class="btn btn-sm btn-outline-danger obrisi-btn">Obriši</button>
                         <button class="btn btn-sm btn-outline-secondary uredi-btn">Uredi opis</button>
-                        <button class="btn btn-sm btn-outline-info detalji-btn">Detalji</button>
+                        <button class="btn btn-sm btn-outline-info detalji-btn"  data-bs-toggle="modal" data-bs-target="#detaljiModal">Detalji</button>
                       </div>
                 </div>
             </div>
@@ -259,6 +276,39 @@ document.getElementById('dodajBtn').addEventListener('click', function() {
 
 document.getElementById('searchInput').addEventListener('input', filtriraj);
 document.getElementById('filterPozicija').addEventListener('change', filtriraj);
+
+function osvjeziVrijeme() {
+    const container = document.getElementById('vrijemeContainer');
+    container.innerHTML = '<div class="col-12 text-center py-4"><div class="spinner-border text-primary"></div><p class="mt-2">Učitavanje...</p></div>';
+
+    Promise.all(utakmice.map(ut => 
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${ut.lat}&longitude=${ut.lon}&current_weather=true`)
+            .then(r => r.json())
+            .then(data => ({ ...ut, temp: data.current_weather.temperature, vjetar: data.current_weather.windspeed, kod: data.current_weather.weathercode }))
+            .catch(() => ({ ...ut, temp: 'N/A', vjetar: 'N/A', kod: 0 }))
+    ))
+    .then(rezultati => {
+        container.innerHTML = '';
+        rezultati.forEach(ut => {
+            const col = document.createElement('div');
+            col.className = 'col-lg-4 col-md-6 mb-4';
+            col.innerHTML = `
+                <div class="card h-100 shadow-sm text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">${ut.grad}</h5>
+                        <h6 class="text-muted">${ut.stadion}</h6>
+                        <p class="small">${ut.datum} · vs ${ut.protivnik}</p>
+                        <div class="display-4 fw-bold my-3">${ut.temp}°C</div>
+                        <p class="text-muted small">Vjetar: ${ut.vjetar} km/h</p>
+                    </div>
+                </div>
+            `;
+            container.appendChild(col);
+        });
+    });
+}
+
+document.getElementById('osvjeziVrijeme').addEventListener('click', osvjeziVrijeme);
 
 filtriraj();
 </script>
