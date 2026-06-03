@@ -80,6 +80,27 @@
         <p>Telefon:--</p>
         <p>Adresa:--</p>
     </section>
+ <section id="sportasi" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-4">Reprezentacija BiH - 2026</h2>
+            <div class="row" id="kartice-container">
+                <!-- Kartice će biti dinamički generisane ovdje -->
+            </div>
+        </div>
+ </section>  
+ <div class="modal fade" id="detaljiModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Detalji će biti dinamički generisani ovdje -->
+            </div>
+        </div>
+    </div>
+ </div>  
     <footer>
         <p>© 2026 Moja Web Stranica.</p>
     </footer>  
@@ -93,6 +114,67 @@
         brojac++;
         this.textContent = 'Kliknuto: ' + brojac + ' puta';
     });
+
+    const igraci = [
+    { ime: "Edin Džeko", pozicija: "Napadač", broj: 11, godina: 1986, grad: "Sarajevo", klub: "Schalke 04", golovi: 73, nastupi: 148, opis: "Kapiten i rekorder po broju golova. Vodi BiH na drugo Svjetsko prvenstvo." },
+    { ime: "Amir Hadžiahmetović", pozicija: "Defenzivni vezni", broj: 16, godina: 1997, grad: "Zenica", klub: "Hull City", golovi: 0, nastupi: 34, opis: "Tvrdi vezni igrač, pčelica u sredini terena." },
+    { ime: "Tarik Muharemović", pozicija: "Štoper", broj: 4, godina: 2003, grad: "Sarajevo", klub: "Sassuolo", golovi: 1, nastupi: 12, opis: "Mlad i lud, igra u Serie A. Budućnost odbrane BiH." },
+    { ime: "Esmir Bajraktarević", pozicija: "Desno krilo", broj: 20, godina: 2005, grad: "Milwaukee, SAD", klub: "PSV Eindhoven", golovi: 1, nastupi: 14, opis: "Rođen u Americi, izabrao BiH. Junak play-offa protiv Italije." },
+    { ime: "Kerim Alajbegović", pozicija: "Lijevo krilo", broj: 19, godina: 2008, grad: "München", klub: "RB Salzburg", golovi: 1, nastupi: 8, opis: "Najmlađi u timu sa 18 godina. Wunderkind iz Salzburga." },
+    { ime: "Amar Memić", pozicija: "Desni vezni", broj: 15, godina: 2001, grad: "Mostar", klub: "Viktoria Plzeň", golovi: 1, nastupi: 11, opis: "Nevjerovatan dribler, brz k'o munja." }
+];
+
+    function generisiKartice(){
+        const container = document.getElementById('kartice-container');
+        igraci.forEach((igrac, index)=>{
+            const col = document.createElement('div');
+            col.className = 'col-lg-4 col-md-6 mb-4';
+            col.innerHTML = `
+              <div class="card h-100 shadow-sm" data-index="${index}" data-bs-toggle="modal" data-bs-target="#detaljiModal">
+                <div class="card-body text-center">
+                    <h5 class="card-title">${igrac.ime}</h5>
+                    <p class="card-text text-muted">${igrac.pozicija} · Broj ${igrac.broj}</p>
+                    <span class="badge bg-primary">${igrac.klub}</span>
+                </div>
+            </div>
+            `;
+            container.appendChild(col);
+        });
+    }
+    document.getElementById('kartice-container').addEventListener('click', function(e){
+        const kartica = e.target.closest('.card');
+        if(kartica){
+            const index = kartica.getAttribute('data-index');
+            const igrac = igraci[index];
+            document.getElementById('modal-title').textContent = igrac.ime;
+            document.getElementById('modal-body').innerHTML = `
+                 <p><strong>Pozicija:</strong> ${igrac.pozicija}</p>
+                 <p><strong>Broj:</strong> ${igrac.broj}</p>
+                 <p><strong>Godina rođenja:</strong> ${igrac.godina}</p>
+                 <p><strong>Mjesto rođenja:</strong> ${igrac.grad}</p>
+                 <p><strong>Klub:</strong> ${igrac.klub}</p>
+                 <p><strong>Nastupi za reprezentaciju:</strong> ${igrac.nastupi}</p>
+                 <p><strong>Golovi:</strong> ${igrac.golovi}</p>
+                 <p>${igrac.opis}</p>
+            `;
+        }
+    });
+
+    generisiKartice();
 </script>
 </body>
 </html>
+Zavrseno:
+- Dan 1: HTML osnove, index.html, Git, GitHub repo
+- Dan 2: Semanticki HTML (header, nav, hero, o nama, usluge, kontakt, footer)
+- Dan 3: CSS stilizacija (boje, fontovi, margine, padding)
+- Dan 4: Bootstrap CDN, navbar, grid, kartice, responsive
+- Dan 5: JavaScript (gumb za promjenu naslova, brojac klikova)
+Sutra - Dan 6: Mini projekat
+Sta trebas uraditi:
+1. Izaberi temu: baza autoservisa, baza kompanija, baza sportasa ili slicno
+2. U index.html dodaj novu sekciju sa hardcoded listom podataka (npr. 5-6 autoservisa/kompanija/sportasa sa nazivom, opisom, slikom)
+3. Prikazi podatke kroz Bootstrap kartice (grid)
+4. Dodaj detaljni prikaz - klik na karticu otvara modal (Bootstrap modal) sa vise informacija
+5. JS: dinamicki generisi kartice iz niza podataka (ne hardcodirati svaku karticu u HTML)
+Cilj: funkcionalna frontend aplikacija sa podacima, karticama i modalom.
