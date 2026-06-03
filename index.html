@@ -83,6 +83,23 @@
  <section id="sportasi" class="py-5 bg-light">
         <div class="container">
             <h2 class="text-center mb-4">Reprezentacija BiH - 2026</h2>
+            <div class="row mb-3">
+        <div class="col-md-6">
+            <input type="text" id="searchInput" class="form-control" placeholder="Pretraži igrače po imenu...">
+        </div>
+        <div class="col-md-4">
+            <select id="filterPozicija" class="form-select">
+                <option value="svi">Sve pozicije</option>
+                <option value="Napadač">Napadač</option>
+                <option value="Vezni">Vezni</option>
+                <option value="Branič">Branič</option>
+                <option value="Golman">Golman</option>
+            </select>
+        </div>
+    <div class="col-md-2 d-flex align-items-center">
+        <span id="brojacIgraca" class="badge bg-secondary fs-6">Prikazano 6 od 6</span>
+    </div>
+</div>
             <div class="row" id="kartice-container">
                 <!-- Kartice će biti dinamički generisane ovdje -->
             </div>
@@ -104,6 +121,7 @@
     <footer>
         <p>© 2026 Moja Web Stranica.</p>
     </footer>  
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     document.getElementById('promijeni').addEventListener('click', function() {
@@ -124,43 +142,43 @@
     { ime: "Amar Memić", pozicija: "Desni vezni", broj: 15, godina: 2001, grad: "Mostar", klub: "Viktoria Plzeň", golovi: 1, nastupi: 11, opis: "Nevjerovatan dribler, brz k'o munja." }
 ];
 
-    function generisiKartice(){
-        const container = document.getElementById('kartice-container');
-        igraci.forEach((igrac, index)=>{
-            const col = document.createElement('div');
-            col.className = 'col-lg-4 col-md-6 mb-4';
-            col.innerHTML = `
-              <div class="card h-100 shadow-sm" data-index="${index}" data-bs-toggle="modal" data-bs-target="#detaljiModal">
+    function prikaziIgrace(niz) {
+    const container = document.getElementById('kartice-container');
+    container.innerHTML = '';
+    niz.forEach((igrac) => {
+        const col = document.createElement('div');
+        col.className = 'col-lg-4 col-md-6 mb-4';
+        col.innerHTML = `
+            <div class="card h-100 shadow-sm" data-index="${igraci.indexOf(igrac)}" data-bs-toggle="modal" data-bs-target="#detaljiModal">
                 <div class="card-body text-center">
                     <h5 class="card-title">${igrac.ime}</h5>
                     <p class="card-text text-muted">${igrac.pozicija} · Broj ${igrac.broj}</p>
                     <span class="badge bg-primary">${igrac.klub}</span>
                 </div>
             </div>
-            `;
-            container.appendChild(col);
-        });
-    }
-    document.getElementById('kartice-container').addEventListener('click', function(e){
-        const kartica = e.target.closest('.card');
-        if(kartica){
-            const index = kartica.getAttribute('data-index');
-            const igrac = igraci[index];
-            document.getElementById('modal-title').textContent = igrac.ime;
-            document.getElementById('modal-body').innerHTML = `
-                 <p><strong>Pozicija:</strong> ${igrac.pozicija}</p>
-                 <p><strong>Broj:</strong> ${igrac.broj}</p>
-                 <p><strong>Godina rođenja:</strong> ${igrac.godina}</p>
-                 <p><strong>Mjesto rođenja:</strong> ${igrac.grad}</p>
-                 <p><strong>Klub:</strong> ${igrac.klub}</p>
-                 <p><strong>Nastupi za reprezentaciju:</strong> ${igrac.nastupi}</p>
-                 <p><strong>Golovi:</strong> ${igrac.golovi}</p>
-                 <p>${igrac.opis}</p>
-            `;
-        }
+        `;
+        container.appendChild(col);
     });
+    document.getElementById('brojacIgraca').textContent = `Prikazano ${niz.length} od ${igraci.length}`;
+}
 
-    generisiKartice();
+function filtriraj() {
+    const tekst = document.getElementById('searchInput').value.toLowerCase();
+    const pozicija = document.getElementById('filterPozicija').value;
+    let filtrirani = igraci;
+    if (tekst) {
+        filtrirani = filtrirani.filter(igrac => igrac.ime.toLowerCase().includes(tekst));
+    }
+    if (pozicija !== 'svi') {
+        filtrirani = filtrirani.filter(igrac => igrac.pozicija.toLowerCase().includes(pozicija.toLowerCase()));
+    }
+    prikaziIgrace(filtrirani);
+}
+
+document.getElementById('searchInput').addEventListener('input', filtriraj);
+document.getElementById('filterPozicija').addEventListener('change', filtriraj);
+
+filtriraj();
 </script>
 </body>
 </html>
