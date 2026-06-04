@@ -3,9 +3,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Card from './components/Card';
+import SearchBar from './components/SearchBar';
 import IgraciList from './components/IgraciList';
 import Footer from './components/Footer';
 import DodajIgraca from './components/DodajIgraca';
+import DetaljiModal from './components/DetaljiModal';
+import Vrijeme from './components/Vrijeme';
 
 function App() {
   const [igraci, setIgraci] = useState([
@@ -17,12 +20,26 @@ function App() {
     { ime: "Amar Memić", pozicija: "Desni vezni", broj: 15, godina: 2001, grad: "Mostar", klub: "Viktoria Plzeň", golovi: 1, nastupi: 11, opis: "Nevjerovatan dribler, brz k'o munja." }
   ]);
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterPozicija, setFilterPozicija] = useState("svi");
+  const [detaljiIgrac, setDetaljiIgrac] = useState(null);
+  
   const usluge = [
     { title: 'Izrada web stranica', text: 'Moderni responsive sajtovi.' },
     { title: 'Redizajn sajtova', text: 'Osavremenite vaš sajt.' },
     { title: 'Responsive dizajn', text: 'Prilagodba svim uređajima.' },
     { title: 'Optimizacija', text: 'Brže učitavanje stranice.' },
   ];
+
+  const filtrirani = igraci.filter(igrac => {
+    const matchIme = igrac.ime.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchPozicija = filterPozicija === "svi" || igrac.pozicija.toLowerCase().includes(filterPozicija.toLowerCase());
+    return matchIme && matchPozicija;
+  });
+
+  function prikaziDetalje(index) {
+    setDetaljiIgrac(igraci[index]);
+  }
 
   function obrisiIgraca(index) {
     setIgraci(prev => prev.filter((_, i) => i !== index));
@@ -58,18 +75,29 @@ function App() {
       <section id="sportasi" className="py-5 bg-light">
         <div className="container">
           <h2 className="mb-4">Reprezentacija BiH - 2026</h2>
+           <SearchBar
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          filterPozicija={filterPozicija}
+          onFilterChange={setFilterPozicija}
+          prikazano={filtrirani.length}
+          ukupno={igraci.length}
+        />
            <DodajIgraca onAdd={dodajIgraca} />
           <IgraciList
-            igraci={igraci}
+            igraci={filtrirani}
             onDelete={obrisiIgraca}
             onEdit={urediOpis}
+            onDetalji={prikaziDetalje}
           />
         </div>
+        <Vrijeme />
       </section>
       <section id="kontakt" className="container py-5 text-center">
         <h2>Kontaktirajte nas</h2>
         <p>Email: hasandurakovic45@gmail.com | hasan.durakovic@edu.fit.ba</p>
       </section>
+        <DetaljiModal igrac={detaljiIgrac} onClose={() => setDetaljiIgrac(null)} />
       <Footer />
     </>
   );

@@ -1,4 +1,4 @@
-function IgraciCard({igrac, index, onDelete, onEdit}) { 
+function IgraciCard({igrac, index, onDelete, onEdit, onDetalji}) { 
     return(
         <div className="col-lg-4 col-md-6 mb-4">
             <div className="card h-100 shadow-sm">
@@ -15,6 +15,9 @@ function IgraciCard({igrac, index, onDelete, onEdit}) {
                             const noviOpis = prompt('Unesi novi opis:', igrac.opis);
                             if(noviOpis)onEdit(index,noviOpis);
                         }}>Uredi opis</button>
+                        <button className="btn btn-sm btn-outline-info" onClick={() => onDetalji(index)}>
+                            Detalji
+                        </button>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 import IgraciCard from './IgraciCard';
 
-function IgraciList({igraci, onDelete, onEdit}){
+function IgraciList({igraci, onDelete, onEdit, onDetalji}) {
     return(
         <div className="row g-3">
             {igraci.map((igrac, index)=>(
@@ -10,6 +10,7 @@ function IgraciList({igraci, onDelete, onEdit}){
                  index={index}
                  onDelete={onDelete}
                  onEdit={onEdit}
+                 onDetalji={onDetalji}
                 />
             ))}
         </div>
