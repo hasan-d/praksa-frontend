@@ -8,6 +8,7 @@ import IgraciList from './components/IgraciList';
 import Footer from './components/Footer';
 import DodajIgraca from './components/DodajIgraca';
 import DetaljiModal from './components/DetaljiModal';
+import UrediOpisModal from './components/UrediOpisModal';
 import Vrijeme from './components/Vrijeme';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterPozicija, setFilterPozicija] = useState("svi");
   const [detaljiIgrac, setDetaljiIgrac] = useState(null);
+  const [editIndex, setEditIndex] = useState(null);
   
   const usluge = [
     { title: 'Izrada web stranica', text: 'Moderni responsive sajtovi.' },
@@ -88,6 +90,7 @@ function App() {
             igraci={filtrirani}
             onDelete={obrisiIgraca}
             onEdit={urediOpis}
+            onEditIndex={setEditIndex}
             onDetalji={prikaziDetalje}
           />
         </div>
@@ -98,6 +101,14 @@ function App() {
         <p>Email: hasandurakovic45@gmail.com | hasan.durakovic@edu.fit.ba</p>
       </section>
         <DetaljiModal igrac={detaljiIgrac} onClose={() => setDetaljiIgrac(null)} />
+        {editIndex !== null && (
+          <UrediOpisModal
+            igrac={igraci[editIndex]}
+            index={editIndex}
+            onSave={(index, noviOpis) => { urediOpis(index, noviOpis); setEditIndex(null); }}
+            onClose={() => setEditIndex(null)}
+          />
+        )}
       <Footer />
     </>
   );

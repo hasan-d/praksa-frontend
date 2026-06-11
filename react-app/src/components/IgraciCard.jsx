@@ -1,4 +1,4 @@
-function IgraciCard({igrac, index, onDelete, onEdit, onDetalji}) { 
+function IgraciCard({igrac, index, onDelete, onEdit, onDetalji, onEditIndex}) { 
     return(
         <div className="col-lg-4 col-md-6 mb-4">
             <div className="card h-100 shadow-sm">
@@ -11,10 +11,7 @@ function IgraciCard({igrac, index, onDelete, onEdit, onDetalji}) {
                     <span className="badge bg-primary">{igrac.klub}</span>
                     <div className="mt-3 d-flex gap-2 justify-content-center">
                         <button className="btn btn-sm btn-outline-danger" onClick={()=>onDelete(index)}>Obrisi</button>
-                        <button className="btn btn-sm btn-outline-secondary" onClick={()=>{
-                            const noviOpis = prompt('Unesi novi opis:', igrac.opis);
-                            if(noviOpis)onEdit(index,noviOpis);
-                        }}>Uredi opis</button>
+                        <button className="btn btn-sm btn-outline-secondary" onClick={() => onEditIndex(index)}>Uredi opis</button>
                         <button className="btn btn-sm btn-outline-info" onClick={() => onDetalji(index)}>
                             Detalji
                         </button>
