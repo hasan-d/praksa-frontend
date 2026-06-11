@@ -1,0 +1,148 @@
+document.getElementById('promijeni').addEventListener('click', function() {
+    document.querySelector('#hero h1').textContent = 'Novi naslov!';
+});
+let brojac = 0;
+document.getElementById('brojac').addEventListener('click',function(){
+    brojac++;
+    this.textContent = 'Kliknuto: ' + brojac + ' puta';
+});
+
+const utakmice = [
+{ grad: "Toronto", datum: "12. jun 2026", protivnik: "Qatar", stadion: "BMO Field", lat: "43.65", lon: "-79.38" },
+{ grad: "Inglewood", datum: "18. jun 2026", protivnik: "Švicarska", stadion: "SoFi Stadium", lat: "33.94", lon: "-118.34" },
+{ grad: "Seattle", datum: "24. jun 2026", protivnik: "Kanada", stadion: "Lumen Field", lat: "47.60", lon: "-122.33" }
+];
+
+const igraci = [
+{ ime: "Edin Džeko", pozicija: "Napadač", broj: 11, godina: 1986, grad: "Sarajevo", klub: "Schalke 04", golovi: 73, nastupi: 148, opis: "Kapiten i rekorder po broju golova. Vodi BiH na drugo Svjetsko prvenstvo." },
+{ ime: "Amir Hadžiahmetović", pozicija: "Defenzivni vezni", broj: 16, godina: 1997, grad: "Zenica", klub: "Hull City", golovi: 0, nastupi: 34, opis: "Tvrdi vezni igrač, pčelica u sredini terena." },
+{ ime: "Tarik Muharemović", pozicija: "Štoper", broj: 4, godina: 2003, grad: "Sarajevo", klub: "Sassuolo", golovi: 1, nastupi: 12, opis: "Mlad i lud, igra u Serie A. Budućnost odbrane BiH." },
+{ ime: "Esmir Bajraktarević", pozicija: "Desno krilo", broj: 20, godina: 2005, grad: "Milwaukee, SAD", klub: "PSV Eindhoven", golovi: 1, nastupi: 14, opis: "Rođen u Americi, izabrao BiH. Junak play-offa protiv Italije." },
+{ ime: "Kerim Alajbegović", pozicija: "Lijevo krilo", broj: 19, godina: 2008, grad: "München", klub: "RB Salzburg", golovi: 1, nastupi: 8, opis: "Najmlađi u timu sa 18 godina. Wunderkind iz Salzburga." },
+{ ime: "Amar Memić", pozicija: "Desni vezni", broj: 15, godina: 2001, grad: "Mostar", klub: "Viktoria Plzeň", golovi: 1, nastupi: 11, opis: "Nevjerovatan dribler, brz k'o munja." }
+];
+
+function prikaziIgrace(niz) {
+const container = document.getElementById('kartice-container');
+container.innerHTML = '';
+niz.forEach((igrac) => {
+    const col = document.createElement('div');
+    col.className = 'col-lg-4 col-md-6 mb-4';
+    col.innerHTML = `
+        <div class="card h-100 shadow-sm" data-index="${igraci.indexOf(igrac)}">
+            <div class="card-body text-center">
+                <h5 class="card-title">${igrac.ime}</h5>
+                <p class="card-text text-muted">${igrac.pozicija} · Broj ${igrac.broj}</p>
+                 <p>${igrac.opis}</p>
+                <span class="badge bg-primary">${igrac.klub}</span>
+                  <div class="mt-3 d-flex gap-2 justify-content-center">
+                    <button class="btn btn-sm btn-outline-danger obrisi-btn">Obriši</button>
+                    <button class="btn btn-sm btn-outline-secondary uredi-btn">Uredi opis</button>
+                    <button class="btn btn-sm btn-outline-info detalji-btn"  data-bs-toggle="modal" data-bs-target="#detaljiModal">Detalji</button>
+                  </div>
+            </div>
+        </div>
+    `;
+    container.appendChild(col);
+});
+document.getElementById('brojacIgraca').textContent = `Prikazano ${niz.length} od ${igraci.length}`;
+}
+
+function filtriraj() {
+const tekst = document.getElementById('searchInput').value.toLowerCase();
+const pozicija = document.getElementById('filterPozicija').value;
+let filtrirani = igraci;
+if (tekst) {
+    filtrirani = filtrirani.filter(igrac => igrac.ime.toLowerCase().includes(tekst));
+}
+if (pozicija !== 'svi') {
+    filtrirani = filtrirani.filter(igrac => igrac.pozicija.toLowerCase().includes(pozicija.toLowerCase()));
+}
+prikaziIgrace(filtrirani);
+}
+document.getElementById('kartice-container').addEventListener('click', function(e) {
+const kartica = e.target.closest('.card');
+if (!kartica) return;
+const index = parseInt(kartica.dataset.index);
+
+if (e.target.classList.contains('obrisi-btn')) {
+    igraci.splice(index, 1);
+    filtriraj();
+}
+else if (e.target.classList.contains('uredi-btn')) {
+    const noviOpis = prompt('Unesi novi opis:', igraci[index].opis);
+    if (noviOpis) {
+        igraci[index].opis = noviOpis;
+        filtriraj();
+    }
+}
+else if (e.target.classList.contains('detalji-btn')) {
+    const igrac = igraci[index];
+    document.getElementById('modal-title').textContent = igrac.ime;
+    document.getElementById('modal-body').innerHTML = `
+        <p><strong>Pozicija:</strong> ${igrac.pozicija}</p>
+        <p><strong>Broj:</strong> ${igrac.broj}</p>
+        <p><strong>Klub:</strong> ${igrac.klub}</p>
+        <p><strong>Nastupi:</strong> ${igrac.nastupi || '/'}</p>
+        <p><strong>Golovi:</strong> ${igrac.golovi || 0}</p>
+        <p>${igrac.opis}</p>
+    `;
+}
+});
+
+document.getElementById('dodajBtn').addEventListener('click', function() {
+const ime = document.getElementById('noviIme').value.trim();
+const pozicija = document.getElementById('noviPozicija').value.trim();
+const broj = parseInt(document.getElementById('noviBroj').value);
+const klub = document.getElementById('noviKlub').value.trim();
+const opis = document.getElementById('noviOpis').value.trim() || 'Novi igrač';
+
+if (!ime || !pozicija || !broj || !klub) {
+    alert('Popuni sva polja!');
+    return;
+}
+
+igraci.push({ ime, pozicija, broj, godina: 0, grad: '', klub, nastupi: 0, golovi: 0, opis });
+
+document.querySelectorAll('#dodajModal input, #dodajModal textarea').forEach(el => el.value = '');
+bootstrap.Modal.getInstance(document.getElementById('dodajModal')).hide();
+filtriraj();
+});
+
+document.getElementById('searchInput').addEventListener('input', filtriraj);
+document.getElementById('filterPozicija').addEventListener('change', filtriraj);
+
+function osvjeziVrijeme() {
+const container = document.getElementById('vrijemeContainer');
+container.innerHTML = '<div class="col-12 text-center py-4"><div class="spinner-border text-primary"></div><p class="mt-2">Učitavanje...</p></div>';
+
+Promise.all(utakmice.map(ut => 
+    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${ut.lat}&longitude=${ut.lon}&current_weather=true`)
+        .then(r => r.json())
+        .then(data => ({ ...ut, temp: data.current_weather.temperature, vjetar: data.current_weather.windspeed, kod: data.current_weather.weathercode }))
+        .catch(() => ({ ...ut, temp: 'N/A', vjetar: 'N/A', kod: 0 }))
+))
+.then(rezultati => {
+    container.innerHTML = '';
+    rezultati.forEach(ut => {
+        const col = document.createElement('div');
+        col.className = 'col-lg-4 col-md-6 mb-4';
+        col.innerHTML = `
+            <div class="card h-100 shadow-sm text-center">
+                <div class="card-body">
+                    <h5 class="card-title">${ut.grad}</h5>
+                    <h6 class="text-muted">${ut.stadion}</h6>
+                    <p class="small">${ut.datum} · vs ${ut.protivnik}</p>
+                    <div class="display-4 fw-bold my-3">${ut.temp}°C</div>
+                    <p class="text-muted small">Vjetar: ${ut.vjetar} km/h</p>
+                </div>
+            </div>
+        `;
+        container.appendChild(col);
+    });
+});
+}
+
+document.getElementById('osvjeziVrijeme').addEventListener('click', osvjeziVrijeme);
+
+filtriraj();
